@@ -280,7 +280,7 @@ user code."
    projectile-enable-caching nil
    scss-sass-command "/Users/andy/\.rvm/gems/ruby-2\.1\.5@poc-oliver/bin/sass"
    projectile-switch-project-action 'projectile-dired
-   custom-theme-directory "~/dotfiles/emacs/themes"
+   custom-theme-directory "~/.spacemacs.d/themes"
    magit-save-repository-buffers nil
    flyspell-prog-text-faces '(font-lock-comment-face font-lock-doc-face)
 

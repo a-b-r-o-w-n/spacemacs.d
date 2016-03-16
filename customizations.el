@@ -115,7 +115,7 @@
  '(yas-choose-keys-first t)
  '(yas-snippet-dirs
    (quote
-    ("/Users/andy/dotfiles/emacs/snippets/" yas-installed-snippets-dir "/Users/andy/.emacs.d/layers/auto-completion/snippets")) nil (yasnippet)))
+    ("/Users/andy/.spacemacs.d/snippets" yas-installed-snippets-dir "/Users/andy/.emacs.d/layers/auto-completion/snippets")) nil (yasnippet)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
