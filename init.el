@@ -269,7 +269,6 @@ user code."
   (define-key flyspell-mode-map (kbd "C-,") 'spacemacs/indent-region-or-buffer)
 
   ;; evil bindings
-  (define-key evil-ex-map (kbd "w") 'force-save)
   (spacemacs/set-leader-keys
     "p a" 'projectile-find-implementation-or-test-other-window
     "p A" 'projectile-toggle-between-implementation-and-test
