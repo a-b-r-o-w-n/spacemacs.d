@@ -273,6 +273,8 @@ user code."
     "p a" 'projectile-find-implementation-or-test-other-window
     "p A" 'projectile-toggle-between-implementation-and-test
     )
+  (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
+  (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
 
   ;; settings
   (setq
