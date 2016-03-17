@@ -306,10 +306,20 @@ user code."
             (lambda ()
               (eslint-set-closest-executable)
               (define-key js2-mode-map (kbd "C-M-.") 'mocha-add-or-remove-only)))
+  (setq flycheck-disabled-checkers
+        (append flycheck-disabled-checkers
+                '(javascript-jshint)))
+  (setq js2-mode-show-parse-errors nil
+        js2-mode-show-strict-warnings nil)
 
   ;; web-mode config
   (add-hook 'web-mode-hook (lambda ()
                              (eslint-set-closest-executable)))
+
+  ;; Ruby
+  ;; Treat _ as a word character
+  (with-eval-after-load 'ruby-mode
+    (modify-syntax-entry ?_ "w" ruby-mode-syntax-table))
 
   ;; powerline config
   (setq powerline-default-separator 'alternate)
