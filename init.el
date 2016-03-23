@@ -34,11 +34,11 @@ values."
      react
      markdown
      floobits
-     spotify
      go
      spacemacs-layouts
-     ;; markdown
-     ;; org
+     spacemacs-helm
+     markdown
+     org
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -66,6 +66,7 @@ values."
    dotspacemacs-excluded-packages
    '(
      tern
+     company-tern
      evil-search-highlight-persist
      web-mode
      )
