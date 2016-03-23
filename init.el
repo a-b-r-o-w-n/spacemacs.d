@@ -261,17 +261,18 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq custom-file "~/.spacemacs.d/customizations.el")
   (add-to-list 'load-path "~/.spacemacs.d/lisp/")
   (setq mac-pass-command-to-system nil)
   )
 
 (defun force-save ()
   (interactive)
+
   (not-modified 1)
   (save-buffer))
 
 (defun dotspacemacs/user-config ()
-  (setq custom-file "~/.spacemacs.d/customizations.el")
   (load-file custom-file)
   (require 'company-simple-complete)
 
@@ -305,21 +306,11 @@ user code."
   (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
   (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
 
-  ;; settings
-  (setq
-   projectile-enable-caching nil
-   scss-sass-command "/Users/andy/\.rvm/gems/ruby-2\.1\.5@poc-oliver/bin/sass"
-   projectile-switch-project-action 'projectile-dired
-   custom-theme-directory "~/.spacemacs.d/themes"
-   magit-save-repository-buffers nil
-   flyspell-prog-text-faces '(font-lock-comment-face font-lock-doc-face)
-
-   ;; spaceline
-   spaceline-minor-modes-p nil
-
-   ;; miscellaneous
-   require-final-newline t
-   )
+  ;; autocomplete
+  ;; (setq company-idle-delay 0.1)
+  ;; (setq company-backends-js2-mode '((company-tern :with company-dabbrev)
+  ;;                                   company-files
+  ;;                                   company-dabbrev))
 
   ;; spaceline
   (spaceline-toggle-buffer-encoding-abbrev-off)
@@ -372,8 +363,6 @@ user code."
   (add-to-list 'auto-mode-alist '("envrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("envrc.local\\'" . shell-script-mode))
 
-  (projectile-register-project-type 'npm '("package.json") "npm start" "npm test")
-
   (add-hook
    'dired-mode-hook
    (lambda ()
@@ -403,4 +392,130 @@ user code."
 
   ;; Start in insert mode
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
+
+  ;; settings
+  (setq
+   projectile-enable-caching nil
+   scss-sass-command "/Users/andy/\.rvm/gems/ruby-2\.1\.5@poc-oliver/bin/sass"
+   projectile-switch-project-action 'projectile-dired
+   custom-theme-directory "~/.spacemacs.d/themes"
+   magit-save-repository-buffers nil
+   flyspell-prog-text-faces '(font-lock-comment-face font-lock-doc-face)
+
+   ;; spaceline
+   spaceline-minor-modes-p nil
+
+   ;; miscellaneous
+   require-final-newline t
+
+   ;; customizations
+   ahs-case-fold-search nil
+   case-fold-search nil
+   create-lockfiles nil
+   css-indent-offset 2
+   delete-selection-mode t
+   exec-path-from-shell-check-startup-files nil
+   flx-ido-mode t
+
+   ;; flycheck
+   flycheck-emacs-lisp-load-path (quote inherit)
+   flycheck-sass-executable "/Users/andy/.rvm/gems/ruby-2.1.5@poc-oliver/bin/sass"
+   flycheck-scss-executable "/Users/andy/.rvm/gems/ruby-2.1.5@poc-oliver/bin/sass"
+   flycheck-standard-error-navigation nil
+   pos-tip-background-color "#A6E22E"
+   pos-tip-foreground-color "#272822"
+
+   ;; go
+   gofmt-command "goimports"
+   gofmt-is-goimports t
+   gofmt-show-errors (quote echo)
+
+   ;; highlight
+   highlight-changes-colors (quote ("#FD5FF0" "#AE81FF"))
+   highlight-tail-colors
+   (quote
+    (("#3E3D31" . 0)
+     ("#67930F" . 20)
+     ("#349B8D" . 30)
+     ("#21889B" . 50)
+     ("#968B26" . 60)
+     ("#A45E0A" . 70)
+     ("#A41F99" . 85)
+     ("#3E3D31" . 100)))
+
+   ;; ido
+   ido-auto-merge-delay-time 5
+   ido-case-fold t
+   ido-enable-flex-matching t
+   ido-mode (quote both)
+   ido-save-directory-list-file "/Users/andy/.emacs.d/.cache/ido.last"
+   ido-vertical-mode t
+
+   ;; javascript
+   js-indent-level 2
+   js2-basic-offset 2
+   js2-highlight-level 3
+   js2-include-node-externs t
+   js2-mode-show-parse-errors nil
+   js2-mode-show-strict-warnings nil
+   js2-strict-cond-assign-warning nil
+   js2-strict-inconsistent-return-warning nil
+   js2-strict-missing-semi-warning nil
+   js2-strict-trailing-comma-warning nil
+   js2-strict-var-hides-function-arg-warning nil
+   js2-strict-var-redeclaration-warning nil
+
+   ;; linum
+   linum-format "%4d "
+
+   ;; magit
+   magit-branch-arguments nil
+   magit-commit-arguments (quote ("--verbose"))
+   magit-commit-show-diff nil
+   magit-delete-by-moving-to-trash nil
+   magit-diff-use-overlays nil
+   magit-fetch-arguments (quote ("--prune"))
+   magit-pull-arguments (quote ("--rebase"))
+   magit-push-arguments (quote ("--set-upstream"))
+   magit-save-repository-buffers nil
+
+   ;; midnight
+   midnight-mode t
+
+   ;; OSX settings
+   ns-command-modifier (quote meta)
+
+   ;; projectile
+   projectile-completion-system (quote helm)
+   projectile-create-missing-test-files nil
+   projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" -g \"\""
+   projectile-global-mode t
+   projectile-switch-project-action (quote projectile-dired)
+
+   ;; shell
+   sh-indentation 2
+
+   ;; smartparens
+   sp-highlight-pair-overlay nil
+   sp-highlight-wrap-overlay nil
+   sp-highlight-wrap-tag-overlay nil
+   sp-show-pair-delay 0.2
+   sp-show-pair-from-inside t
+
+   ;; tramp
+   tramp-default-method "ssh"
+
+   ;; version control
+   vc-follow-symlinks t
+
+   ;; web-mode
+   web-mode-code-indent-offset 2
+   web-mode-enable-auto-pairing nil t
+   web-mode-indent-style 1
+   web-mode-markup-indent-offset 2
+
+   ;; yas snippet
+   yas-choose-keys-first t
+   yas-snippet-dirs '("/Users/andy/.spacemacs.d/snippets" yas-installed-snippets-dir "/Users/andy/.emacs.d/layers/auto-completion/snippets")
   )
+)
