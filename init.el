@@ -260,6 +260,7 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (add-to-list 'load-path "~/.spacemacs.d/lisp/")
   (setq mac-pass-command-to-system nil)
   )
 
@@ -271,6 +272,8 @@ user code."
 (defun dotspacemacs/user-config ()
   (setq custom-file "~/.spacemacs.d/customizations.el")
   (load-file custom-file)
+  (require 'company-simple-complete)
+
   ;; keybindings
   (define-key key-translation-map "\C-j" "\C-x")
   (global-set-key (kbd "C-x C-s") 'force-save)
