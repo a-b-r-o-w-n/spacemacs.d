@@ -278,7 +278,7 @@ user code."
   (require 'init-javascript)
 
   ;; keybindings
-  (define-key key-translation-map "\C-j" "\C-x")
+  ;; (define-key key-translation-map "\C-j" "\C-x")
   (global-set-key (kbd "C-x C-s") 'force-save)
   (global-set-key (kbd "M-\\") 'spacemacs/comment-or-uncomment-lines)
   (global-set-key (kbd "C-,") 'spacemacs/indent-region-or-buffer)
