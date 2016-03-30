@@ -240,7 +240,7 @@ values."
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil advises quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server nil
+   dotspacemacs-persistent-server t
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
@@ -275,6 +275,7 @@ user code."
 (defun dotspacemacs/user-config ()
   (load-file custom-file)
   (require 'company-simple-complete)
+  (require 'init-javascript)
 
   ;; keybindings
   (define-key key-translation-map "\C-j" "\C-x")
@@ -306,12 +307,6 @@ user code."
   (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
   (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
 
-  ;; autocomplete
-  ;; (setq company-idle-delay 0.1)
-  ;; (setq company-backends-js2-mode '((company-tern :with company-dabbrev)
-  ;;                                   company-files
-  ;;                                   company-dabbrev))
-
   ;; spaceline
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (spaceline-toggle-buffer-position-off)
@@ -321,18 +316,6 @@ user code."
   (global-linum-mode 1)
 
   (add-hook 'term-mode-hook 'spacemacs/toggle-line-numbers-off)
-
-  ;; js2-mode config
-  (add-hook 'js2-mode-hook 'spacemacs/toggle-syntax-checking-on)
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (eslint-set-closest-executable)
-              (define-key js2-mode-map (kbd "C-M-.") 'mocha-add-or-remove-only)))
-  (setq flycheck-disabled-checkers
-        (append flycheck-disabled-checkers
-                '(javascript-jshint)))
-  (setq js2-mode-show-parse-errors nil
-        js2-mode-show-strict-warnings nil)
 
   ;; web-mode config
   (add-hook 'web-mode-hook (lambda ()
@@ -359,7 +342,6 @@ user code."
   (add-to-list 'auto-mode-alist '("zshrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("eslintrc\\'" . json-mode))
   (add-to-list 'auto-mode-alist '("babelrc\\'" . json-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js2-jsx-mode))
   (add-to-list 'auto-mode-alist '("envrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("envrc.local\\'" . shell-script-mode))
 
@@ -450,20 +432,6 @@ user code."
    ido-mode (quote both)
    ido-save-directory-list-file "/Users/andy/.emacs.d/.cache/ido.last"
    ido-vertical-mode t
-
-   ;; javascript
-   js-indent-level 2
-   js2-basic-offset 2
-   js2-highlight-level 3
-   js2-include-node-externs t
-   js2-mode-show-parse-errors nil
-   js2-mode-show-strict-warnings nil
-   js2-strict-cond-assign-warning nil
-   js2-strict-inconsistent-return-warning nil
-   js2-strict-missing-semi-warning nil
-   js2-strict-trailing-comma-warning nil
-   js2-strict-var-hides-function-arg-warning nil
-   js2-strict-var-redeclaration-warning nil
 
    ;; linum
    linum-format "%4d "
