@@ -25,16 +25,17 @@
                                   company-dabbrev))
 
 ;; Set up flycheck for javascript
-(with-eval-after-load 'flycheck
+(with-eval-after-load 'flycheck-mode
   (push 'javascript-jshint flycheck-disabled-checkers)
   (push 'json-jsonlint flycheck-disabled-checkers)
   (push 'js2-jsx-mode flycheck-global-modes)
+  (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
+  )
 
-  (flycheck-add-mode 'javascript-eslint 'web-mode))
 
-;; Find eslint by walking up directory
 (add-hook 'js-mode-hook 'eslint-set-closest-executable)
 (defun eslint-set-closest-executable (&optional dir)
+  ;; Find eslint by walking up directory
   (interactive)
   (let* ((dir (or dir default-directory))
          (eslint-executable (concat dir "/node_modules/.bin/eslint")))
