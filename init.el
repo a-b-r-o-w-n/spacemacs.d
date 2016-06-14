@@ -20,28 +20,30 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
+     php
+     ruby
+     nginx
+     yaml
      python
      auto-completion
      better-defaults
      emacs-lisp
      git
+     github
      javascript
      react
      markdown
      floobits
      go
      spacemacs-layouts
-     spacemacs-helm
+     helm
      markdown
      org
      (shell :variables
+            shell-default-shell 'ansi-term
+            shell-default-term-shell "/bin/zsh"
             shell-default-height 30
-            shell-default-position 'bottom)
+            shell-default-position 'right)
      spell-checking
      (syntax-checking :variables syntax-checking-enable-tooltips nil)
      version-control
@@ -65,10 +67,12 @@ values."
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages
    '(
-     tern
-     company-tern
+     ;; tern
+     ;; company-tern
      evil-search-highlight-persist
      web-mode
+     ;; spaceline
+     ;; powerline
      )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -123,9 +127,8 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         monokai
-                         molokai-andy
                          spacemacs-dark
+                         monokai
                          spacemacs-light
                          )
    ;; If non nil the cursor color matches the state color.
@@ -240,7 +243,7 @@ values."
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil advises quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server t
+   dotspacemacs-persistent-server nil
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
@@ -276,6 +279,7 @@ user code."
   (load-file custom-file)
   (require 'company-simple-complete)
   (require 'init-javascript)
+  (require 'init-ruby)
 
   ;; keybindings
   ;; (define-key key-translation-map "\C-j" "\C-x")
@@ -307,24 +311,20 @@ user code."
   (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
   (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
 
-  ;; spaceline
+  ;; ;; spaceline
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (spaceline-toggle-buffer-position-off)
   (spaceline-toggle-hud-off)
 
   (global-vi-tilde-fringe-mode -1)
   (global-linum-mode 1)
+  (linum-relative-global-mode)
 
   (add-hook 'term-mode-hook 'spacemacs/toggle-line-numbers-off)
 
   ;; web-mode config
   (add-hook 'web-mode-hook (lambda ()
                              (eslint-set-closest-executable)))
-
-  ;; Ruby
-  ;; Treat _ as a word character
-  (with-eval-after-load 'ruby-mode
-    (modify-syntax-entry ?_ "w" ruby-mode-syntax-table))
 
   ;; powerline config
   (setq powerline-default-separator 'alternate)
@@ -435,6 +435,7 @@ user code."
 
    ;; linum
    linum-format "%4d "
+   linum-relative-format "%3s "
 
    ;; magit
    magit-branch-arguments nil
@@ -459,7 +460,7 @@ user code."
    ;; projectile
    projectile-completion-system (quote helm)
    projectile-create-missing-test-files nil
-   projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" -g \"\""
+   projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" --ignore \"tmp\" -g \"\""
    projectile-global-mode t
    projectile-switch-project-action (quote projectile-dired)
 
@@ -482,10 +483,32 @@ user code."
    ;; web-mode
    web-mode-code-indent-offset 2
    web-mode-indent-style 1
-   web-mode-markup-indent-offset 2
+   web--markup-indent-offset 2
 
    ;; yas snippet
    yas-choose-keys-first t
    yas-snippet-dirs '("/Users/andy/.spacemacs.d/snippets" yas-installed-snippets-dir "/Users/andy/.emacs.d/layers/auto-completion/snippets")
+
+   ;; mode-line
+   mode-line-format
+   '((:eval (window-numbering-get-number-string))
+    mode-line-front-space
+    evil-mode-line-tag
+    " "
+    mode-line-position
+    " "
+    mode-line-buffer-identification
+    ;; mode-line-mule-info
+    ;; mode-line-client
+    ;; " "
+    mode-line-modified
+    mode-line-remote
+    ;; mode-line-frame-identification
+    " "
+    (vc-mode vc-mode)
+    " "
+    mode-line-modes
+    ;; mode-line-misc-info
+    mode-line-end-spaces)
+   )
   )
-)

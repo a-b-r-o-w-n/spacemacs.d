@@ -23,7 +23,7 @@
      ((member project-type '(rails-test ruby-test lein-test boot-clj go)) "_test")
      ((member project-type '(scons)) "test")
      ((member project-type '(maven symfony)) "Test")
-     ((member project-type '(gulp npm)) "Spec")
+     ((member project-type '(gulp npm)) ".spec")
      ((member project-type '(gradle gradlew grails)) "Spec"))))
 
 (defun split-window-sensibly (&optional window)
