@@ -3,15 +3,17 @@
 #key : rcoms
 #contributor : Andy Brown
 # --
-const React = require('react')
-const $1 = require('app/$2')
+import React from 'react'
+import { shallow } from 'enzyme'
+
+import { $1 } from '../../components'
 
 describe('$1', () => {
   function render(props = {}) {
-    return shallowRender(<$1 {...props} />)
+    return shallow(<$1 {...props} />)
   }
 
-  it('renders', () => {
+  ${0:it('renders', () => {
     expect(render()).to.exist
-  })
+  })}
 })

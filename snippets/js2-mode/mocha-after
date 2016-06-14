@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : mocha-after
+#key : aft
+#contributor : Andy Brown
+# --
+afterEach(() => {
+  $0
+})
