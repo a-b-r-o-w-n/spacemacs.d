@@ -67,12 +67,7 @@ values."
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages
    '(
-     ;; tern
-     ;; company-tern
      evil-search-highlight-persist
-     web-mode
-     ;; spaceline
-     ;; powerline
      )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
