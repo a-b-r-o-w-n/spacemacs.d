@@ -507,7 +507,7 @@ user code."
 
    ;; yas snippet
    yas-choose-keys-first t
-   yas-snippet-dirs '("/Users/andy/.spacemacs.d/snippets" yas-installed-snippets-dir "/Users/andy/.emacs.d/layers/auto-completion/snippets")
+   yas-snippet-dirs '("~/.spacemacs.d/snippets" yas-installed-snippets-dir "~/.emacs.d/layers/auto-completion/snippets")
 
    ;; mode-line
    mode-line-format
