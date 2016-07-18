@@ -58,7 +58,7 @@ values."
             shell-default-shell 'ansi-term
             shell-default-term-shell "/bin/zsh"
             shell-default-height 30
-            shell-default-position 'right)
+            shell-default-position 'bottom)
      spell-checking
      (syntax-checking :variables syntax-checking-enable-tooltips nil)
      version-control
