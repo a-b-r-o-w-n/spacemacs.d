@@ -474,9 +474,6 @@ user code."
    ;; midnight
    midnight-mode t
 
-   ;; org mode
-   org-agenda-files '("~/Google Drive/org")
-
    ;; OSX settings
    ns-command-modifier (quote meta)
 
@@ -534,4 +531,8 @@ user code."
     ;; mode-line-misc-info
     mode-line-end-spaces)
    )
+
+  ;; org mode
+  (with-eval-after-load 'org
+    (setq org-agenda-files '("~/org")))
   )
