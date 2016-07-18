@@ -463,7 +463,6 @@ user code."
 
    ;; magit
    magit-branch-arguments nil
-   magit-commit-arguments (quote ("--verbose"))
    magit-commit-show-diff nil
    magit-delete-by-moving-to-trash nil
    magit-diff-use-overlays nil
