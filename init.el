@@ -78,6 +78,10 @@ values."
      gist
      zop-to-char
      shackle
+
+     ; yas-snippet extras
+     react-snippets
+     mocha-snippets
      )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages
