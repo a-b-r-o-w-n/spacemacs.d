@@ -32,6 +32,9 @@
   (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
   )
 
+;; Treat _ as a word character
+(with-eval-after-load 'js2-jsx-mode
+  (modify-syntax-entry ?_ "w" js2-jsx-mode-syntax-table))
 
 (add-hook 'js-mode-hook 'eslint-set-closest-executable)
 (defun eslint-set-closest-executable (&optional dir)
