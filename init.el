@@ -401,7 +401,7 @@ user code."
 
   ;; settings
   (setq
-   projectile-enable-caching nil
+   projectile-enable-caching t
    scss-sass-command "/Users/andy/\.rvm/gems/ruby-2\.1\.5@poc-oliver/bin/sass"
    projectile-switch-project-action 'projectile-dired
    custom-theme-directory "~/.spacemacs.d/themes"
