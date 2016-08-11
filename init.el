@@ -50,6 +50,7 @@ values."
      markdown
      floobits
      go
+     scala
      spacemacs-layouts
      helm
      markdown
