@@ -3,4 +3,4 @@
 #key : rq
 #contributor : Andy Brown
 # --
-require('$1')
+var $1 = require("$2");
