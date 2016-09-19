@@ -26,10 +26,11 @@
 
 ;; Set up flycheck for javascript
 (with-eval-after-load 'flycheck-mode
-  (push 'javascript-jshint flycheck-disabled-checkers)
+  ;; (push 'javascript-jshint flycheck-disabled-checkers)
   (push 'json-jsonlint flycheck-disabled-checkers)
   (push 'js2-jsx-mode flycheck-global-modes)
   (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
+  (flycheck-add-mode 'javascript-jshint 'js2-jsx-mode)
   )
 
 ;; Treat _ as a word character
