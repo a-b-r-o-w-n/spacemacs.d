@@ -79,6 +79,7 @@ values."
      gist
      zop-to-char
      shackle
+     tidy
 
      ; yas-snippet extras
      react-snippets
@@ -110,7 +111,7 @@ values."
    ;; (default t)
    dotspacemacs-elpa-https nil
    ;; Maximum allowed time in seconds to contact an ELPA repository.
-   dotspacemacs-elpa-timeout 5
+   dotspacemacs-elpa-timeout 30
    ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. (default t)
    dotspacemacs-check-for-update t
@@ -381,7 +382,7 @@ user code."
                indent-tabs-mode 1)))
 
   (setq shackle-rules '(
-                        (magit-status-mode :align below)))
+                        (magit-status-mode :align right :size 0.3)))
   (shackle-mode)
 
   ;; Move text up and down in visual mode with J/K
@@ -402,7 +403,6 @@ user code."
   ;; settings
   (setq
    projectile-enable-caching t
-   scss-sass-command "/Users/andy/\.rvm/gems/ruby-2\.1\.5@poc-oliver/bin/sass"
    projectile-switch-project-action 'projectile-dired
    custom-theme-directory "~/.spacemacs.d/themes"
    magit-save-repository-buffers nil
@@ -425,8 +425,7 @@ user code."
 
    ;; flycheck
    flycheck-emacs-lisp-load-path (quote inherit)
-   flycheck-sass-executable "/Users/andy/.rvm/gems/ruby-2.1.5@poc-oliver/bin/sass"
-   flycheck-scss-executable "/Users/andy/.rvm/gems/ruby-2.1.5@poc-oliver/bin/sass"
+   flycheck-ruby-rubocop-executable "/Users/abrown/.rvm/gems/ruby-2.3.1@emacs/bin/rubocop"
    flycheck-standard-error-navigation nil
    pos-tip-background-color "#A6E22E"
    pos-tip-foreground-color "#272822"
