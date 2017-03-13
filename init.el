@@ -30,13 +30,14 @@ values."
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
-   ;; List of configuration layers to load. If it is the symbol `all' instead
-   ;; of a list then all discovered layers will be installed.
+   ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     csv
      clojure
      vimscript
-     ruby
+     (ruby :variables
+           ruby-version-manager 'rbenv)
      nginx
      yaml
      ; python
@@ -64,7 +65,7 @@ values."
      (syntax-checking :variables syntax-checking-enable-tooltips nil)
      version-control
      (osx :variables osx-use-option-as-meta nil)
-     ; themes-megapack
+     themes-megapack
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -80,6 +81,8 @@ values."
      zop-to-char
      shackle
      tidy
+     all-the-icons
+     helm-fuzzier
 
      ; yas-snippet extras
      react-snippets
@@ -109,9 +112,9 @@ values."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https nil
+   dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
-   dotspacemacs-elpa-timeout 30
+   dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. (default t)
    dotspacemacs-check-for-update t
@@ -129,20 +132,25 @@ values."
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
-   ;; List of items to show in startup buffer or an association list of of
-   ;; the form `(list-type . list-size)`. If nil it is disabled.
+   ;; List of items to show in startup buffer or an association list of
+   ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
-   dotspacemacs-startup-lists '((projects . 5)
-                                (recents . 7))
+   ;; List sizes may be nil, in which case
+   ;; `spacemacs-buffer-startup-lists-length' takes effect.
+   dotspacemacs-startup-lists '((recents . 5)
+                                (projects . 7))
+   ;; True if the home buffer should respond to resize events.
+   dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         spacemacs-dark
                          monokai
+                         sanityinc-tomorrow-eighties
+                         spacemacs-dark
                          spacemacs-light
                          )
    ;; If non nil the cursor color matches the state color.
@@ -150,12 +158,17 @@ values."
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Inconsolatag"
-                               :size 14
+                               :size 16
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
+   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
+   ;; (default "SPC")
+   dotspacemacs-emacs-command-key "SPC"
+   ;; The key used for Vim Ex commands (default ":")
+   dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
    dotspacemacs-emacs-leader-key "M-m"
@@ -163,7 +176,7 @@ values."
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m)
+   ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs C-i, TAB and C-m, RET.
@@ -172,14 +185,17 @@ values."
    ;; In the terminal, these pairs are generally indistinguishable, so this only
    ;; works in the GUI. (default nil)
    dotspacemacs-distinguish-gui-tab nil
-   ;; (Not implemented) dotspacemacs-distinguish-gui-ret nil
-   ;; The command key used for Evil commands (ex-commands) and
-   ;; Emacs commands (M-x).
-   ;; By default the command key is `:' so ex-commands are executed like in Vim
-   ;; with `:' and Emacs commands are executed with `<leader> :'.
-   dotspacemacs-command-key ":"
-   ;; If non nil `Y' is remapped to `y$'. (default t)
-   dotspacemacs-remap-Y-to-y$ t
+   ;; If non nil `Y' is remapped to `y$' in Evil states. (default nil)
+   dotspacemacs-remap-Y-to-y$ nil
+   ;; If non-nil, the shift mappings `<' and `>' retain visual state if used
+   ;; there. (default t)
+   dotspacemacs-retain-visual-state-on-shift t
+   ;; If non-nil, J and K move lines up and down when in visual mode.
+   ;; (default nil)
+   dotspacemacs-visual-line-move-text nil
+   ;; If non nil, inverse the meaning of `g' in `:substitute' Evil ex-command.
+   ;; (default nil)
+   dotspacemacs-ex-substitute-global nil
    ;; Name of the default layout (default "Default")
    dotspacemacs-default-layout-name "Default"
    ;; If non nil the default layout name is displayed in the mode-line.
@@ -209,6 +225,11 @@ values."
    ;; define the position to display `helm', options are `bottom', `top',
    ;; `left', or `right'. (default 'bottom)
    dotspacemacs-helm-position 'bottom
+   ;; Controls fuzzy matching in helm. If set to `always', force fuzzy matching
+   ;; in all non-asynchronous sources. If set to `source', preserve individual
+   ;; source settings. Else, disable fuzzy matching in all sources.
+   ;; (default 'always)
+   dotspacemacs-helm-use-fuzzy 'always
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
    dotspacemacs-enable-paste-transient-state t
@@ -267,7 +288,7 @@ values."
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
    dotspacemacs-highlight-delimiters 'all
-   ;; If non nil advises quit functions to keep server open when quitting.
+   ;; If non nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
    dotspacemacs-persistent-server nil
    ;; List of search tool executable names. Spacemacs uses the first installed
@@ -290,6 +311,7 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setenv "PATH" (concat (getenv "PATH") ":/usr/bin:/usr/local/bin"))
   (setq custom-file "~/.spacemacs.d/customizations.el")
   (add-to-list 'load-path "~/.spacemacs.d/lisp/")
   (setq mac-pass-command-to-system nil)
@@ -303,7 +325,7 @@ user code."
 
 (defun dotspacemacs/user-config ()
   (load-file custom-file)
-  (require 'company-simple-complete)
+  ;; (require 'company-simple-complete)
   (require 'init-javascript)
   (require 'init-ruby)
 
@@ -333,6 +355,7 @@ user code."
   (spacemacs/set-leader-keys
     "p a" 'projectile-find-implementation-or-test-other-window
     "p A" 'projectile-toggle-between-implementation-and-test
+    "f n s" 'neotree-show
     )
   (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
   (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
@@ -360,8 +383,7 @@ user code."
 
   ;; save hooks
   (add-hook 'before-save-hook (lambda ()
-                                (auto-make-directory)
-                                (whitespace-cleanup)))
+                                (auto-make-directory)))
 
 
   (add-to-list 'auto-mode-alist '("zshrc\\'" . shell-script-mode))
@@ -400,13 +422,18 @@ user code."
   ;; Start in insert mode
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
 
+  (flyspell-mode 0)
+  (helm-fuzzier-mode 1)
+
   ;; settings
   (setq
-   projectile-enable-caching t
-   projectile-switch-project-action 'projectile-dired
+   shell-file-name "/bin/bash"
    custom-theme-directory "~/.spacemacs.d/themes"
    magit-save-repository-buffers nil
    flyspell-prog-text-faces '(font-lock-comment-face font-lock-doc-face)
+
+   ;; neotree
+   neo-theme (if (display-graphic-p) 'icons 'arrow)
 
    ;; spaceline
    spaceline-minor-modes-p nil
@@ -434,6 +461,14 @@ user code."
    gofmt-command "goimports"
    gofmt-is-goimports t
    gofmt-show-errors (quote echo)
+
+   ;; helm
+   helm-mode-fuzzy-match t
+   helm-ag-use-agignore t
+   helm-ag-fuzzy-match t
+   helm-projectile-fuzzy-match t
+   helm-candidate-number-limit 100
+   helm-ff-candidate-number-limit 100
 
    ;; highlight
    highlight-changes-colors (quote ("#FD5FF0" "#AE81FF"))
@@ -477,9 +512,11 @@ user code."
    ns-command-modifier (quote meta)
 
    ;; projectile
+   projectile-enable-caching t
+   projectile-switch-project-action 'projectile-dired
    projectile-completion-system (quote helm)
    projectile-create-missing-test-files nil
-   projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" --ignore \"tmp\" -g \"\""
+   ;; projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" --ignore \"tmp\" -g \"\""
    projectile-global-mode t
    projectile-switch-project-action (quote projectile-dired)
 
@@ -506,7 +543,12 @@ user code."
 
    ;; yas snippet
    yas-choose-keys-first t
-   yas-snippet-dirs '("~/.spacemacs.d/snippets" yas-installed-snippets-dir "~/.emacs.d/layers/auto-completion/snippets")
+   yas-snippet-dirs
+   '(
+     "~/.spacemacs.d/snippets"
+     yas-installed-snippets-dir
+     "~/.emacs.d/layers/+completion/auto-completion/local/snippets"
+     )
 
    ;; mode-line
    mode-line-format

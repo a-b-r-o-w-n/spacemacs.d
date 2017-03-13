@@ -3,4 +3,4 @@
 #key : rq
 #contributor : Andy Brown
 # --
-var $1 = require("$2");
+const $1 = require("$2");
