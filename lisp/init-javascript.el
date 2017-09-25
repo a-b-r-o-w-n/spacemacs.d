@@ -46,6 +46,10 @@
 ;; Treat _ as a word character
 (with-eval-after-load 'js2-jsx-mode
   (modify-syntax-entry ?_ "w" js2-jsx-mode-syntax-table))
+(with-eval-after-load 'js2-mode
+  (modify-syntax-entry ?_ "w" js2-mode-syntax-table))
+(with-eval-after-load 'web-mode
+  (modify-syntax-entry ?_ "w" web-mode-syntax-table))
 
 (add-hook 'js-mode-hook 'eslint-set-closest-executable)
 (defun eslint-set-closest-executable (&optional dir)

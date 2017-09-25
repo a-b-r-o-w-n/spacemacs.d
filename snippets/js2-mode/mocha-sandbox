@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : mocha-sandbox
+#key : sand
+#contributor : Andy Brown
+# --
+sandboxBeforeEach((sb) => {
+  $0
+});
