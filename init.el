@@ -33,11 +33,13 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     sql
      csv
      clojure
      vimscript
      (ruby :variables
-           ruby-version-manager 'rbenv)
+           ruby-version-manager 'rbenv
+           ruby-test-runner 'rspec)
      nginx
      yaml
      ; python
@@ -61,7 +63,6 @@ values."
             shell-default-term-shell "/bin/zsh"
             shell-default-height 30
             shell-default-position 'bottom)
-     spell-checking
      (syntax-checking :variables syntax-checking-enable-tooltips nil)
      version-control
      (osx :variables osx-use-option-as-meta nil)
@@ -69,8 +70,8 @@ values."
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
-   ;; packages then consider to create a layer, you can also put the
-   ;; configuration in `dotspacemacs/config'.
+   ;; packages, then consider creating a layer. You can also put the
+   ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages
    '(
      scratch
@@ -87,15 +88,21 @@ values."
      ; yas-snippet extras
      react-snippets
      )
-   ;; A list of packages and/or extensions that will not be install and loaded.
+   ;; A list of packages that cannot be updated.
+   dotspacemacs-frozen-packages '()
+   ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages
    '(
      evil-search-highlight-persist
      )
-   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
-   ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'. (default t)
-   dotspacemacs-delete-orphan-packages t))
+   ;; Defines the behaviour of Spacemacs when installing packages.
+   ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
+   ;; `used-only' installs only explicitly used packages and uninstall any
+   ;; unused packages as well as their unused dependencies.
+   ;; `used-but-keep-unused' installs only the used packages but won't uninstall
+   ;; them if they become unused. `all' installs *all* packages supported by
+   ;; Spacemacs and never uninstall them. (default is `used-only')
+   dotspacemacs-install-packages 'used-only))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -116,13 +123,21 @@ values."
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for updates at startup
-   ;; when the current branch is not `develop'. (default t)
-   dotspacemacs-check-for-update t
-   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
-   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
-   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
-   ;; unchanged. (default 'vim)
-   dotspacemacs-editing-style 'hybrid
+   ;; when the current branch is not `develop'. Note that checking for
+   ;; new versions works via git commands, thus it calls GitHub services
+   ;; whenever you start Emacs. (default nil)
+   dotspacemacs-check-for-update nil
+   ;; If non-nil, a form that evaluates to a package directory. For example, to
+   ;; use different package directories for different Emacs versions, set this
+   ;; to `emacs-version'.
+   dotspacemacs-elpa-subdirectory nil
+   ;; One of `vim', `emacs' or `hybrid'.
+   ;; `hybrid' is like `vim' except that `insert state' is replaced by the
+   ;; `hybrid state' with `emacs' key bindings. The value can also be a list
+   ;; with `:variables' keyword (similar to layers). Check the editing styles
+   ;; section of the documentation for details on available variables.
+   ;; (default 'vim)
+   dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -153,12 +168,12 @@ values."
                          spacemacs-dark
                          spacemacs-light
                          )
-   ;; If non nil the cursor color matches the state color.
+   ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
-   ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Inconsolatag"
-                               :size 16
+   ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
+   ;; quickly tweak the mode-line size to make separators look not too crappy.
+   dotspacemacs-default-font '("Hack"
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -213,10 +228,8 @@ values."
    ;; file stored in the cache directory and `nil' to disable auto-saving.
    ;; (default 'cache)
    dotspacemacs-auto-save-file-location nil
-   ;; If non nil then `ido' replaces `helm' for some commands. For now only
-   ;; `find-files' (SPC f f), `find-spacemacs-file' (SPC f e s), and
-   ;; `find-contrib-file' (SPC f e c) are replaced. (default nil)
-   dotspacemacs-use-ido nil
+   ;; Maximum number of rollback slots to keep in the cache. (default 5)
+   dotspacemacs-max-rollback-slots 5
    ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
    dotspacemacs-helm-resize nil
    ;; if non nil, the helm header is hidden when there is only one source.
@@ -232,7 +245,7 @@ values."
    dotspacemacs-helm-use-fuzzy 'always
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
-   dotspacemacs-enable-paste-transient-state t
+   dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
    dotspacemacs-which-key-delay 0.4
@@ -273,10 +286,23 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; Control line numbers activation.
+   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
+   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
+   ;; This variable can also be set to a property list for finer control:
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
    dotspacemacs-line-numbers t
+   ;; Code folding method. Possible values are `evil' and `origami'.
+   ;; (default 'evil)
+   dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -309,12 +335,14 @@ values."
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
-It is called immediately after `dotspacemacs/init'.  You are free to put any
-user code."
+It is called immediately after `dotspacemacs/init', before layer configuration
+executes.
+ This function is mostly useful for variables that need to be set
+before packages are loaded. If you are unsure, you should try in setting them in
+`dotspacemacs/user-config' first."
   (setenv "PATH" (concat (getenv "PATH") ":/usr/bin:/usr/local/bin"))
   (setq custom-file "~/.spacemacs.d/customizations.el")
   (add-to-list 'load-path "~/.spacemacs.d/lisp/")
-  (setq mac-pass-command-to-system nil)
   )
 
 (defun force-save ()
@@ -328,6 +356,8 @@ user code."
   ;; (require 'company-simple-complete)
   (require 'init-javascript)
   (require 'init-ruby)
+
+  (setq mac-pass-command-to-system nil)
 
   ;; keybindings
   ;; (define-key key-translation-map "\C-j" "\C-x")
@@ -349,7 +379,6 @@ user code."
   (global-set-key (kbd "C-S-c") 'evil-surround-change)
   (global-set-key (kbd "M-z") 'zop-to-char)
   (global-set-key (kbd "M-W") 'copy-word)
-  (define-key flyspell-mode-map (kbd "C-,") 'spacemacs/indent-region-or-buffer)
 
   ;; evil bindings
   (spacemacs/set-leader-keys
@@ -422,7 +451,6 @@ user code."
   ;; Start in insert mode
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
 
-  (flyspell-mode 0)
   (helm-fuzzier-mode 1)
 
   ;; settings
@@ -430,7 +458,6 @@ user code."
    shell-file-name "/bin/bash"
    custom-theme-directory "~/.spacemacs.d/themes"
    magit-save-repository-buffers nil
-   flyspell-prog-text-faces '(font-lock-comment-face font-lock-doc-face)
 
    ;; neotree
    neo-theme (if (display-graphic-p) 'icons 'arrow)
@@ -445,7 +472,6 @@ user code."
    ahs-case-fold-search nil
    case-fold-search nil
    create-lockfiles nil
-   css-indent-offset 2
    delete-selection-mode t
    exec-path-from-shell-check-startup-files nil
    flx-ido-mode t
@@ -521,6 +547,7 @@ user code."
    projectile-switch-project-action (quote projectile-dired)
 
    ;; shell
+   sh-basic-offset 2
    sh-indentation 2
 
    ;; smartparens
