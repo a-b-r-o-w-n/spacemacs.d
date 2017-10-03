@@ -1,8 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-(load-file "~/.spacemacs.d/functions.el")
-(require 'spacemacs-functions)
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
@@ -33,36 +31,27 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     sql
-     csv
-     clojure
-     vimscript
-     (ruby :variables
-           ruby-version-manager 'rbenv
-           ruby-test-runner 'rspec)
-     nginx
+     html
+     ruby
+     javascript
      yaml
-     ; python
+     ;; ----------------------------------------------------------------
+     ;; Example of useful layers you may want to use right away.
+     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
+     ;; <M-m f e R> (Emacs style) to install them.
+     ;; ----------------------------------------------------------------
+     helm
      auto-completion
      better-defaults
      emacs-lisp
      git
-     github
-     javascript
-     react
-     markdown
-     floobits
-     go
-     scala
-     spacemacs-layouts
-     helm
-     markdown
-     org
-     (shell :variables
-            shell-default-shell 'ansi-term
-            shell-default-term-shell "/bin/zsh"
-            shell-default-height 30
-            shell-default-position 'bottom)
+     docker
+     ;; markdown
+     ;; org
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position 'bottom)
+     ;; spell-checking
      (syntax-checking :variables syntax-checking-enable-tooltips nil)
      version-control
      (osx :variables osx-use-option-as-meta nil)
@@ -74,27 +63,15 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages
    '(
-     scratch
-     move-dup
-     dockerfile-mode
-     restclient
-     gist
-     zop-to-char
+     rjsx-mode
      shackle
-     tidy
      all-the-icons
-     helm-fuzzier
-
-     ; yas-snippet extras
-     react-snippets
+     dtrt-indent
      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages
-   '(
-     evil-search-highlight-persist
-     )
+   dotspacemacs-excluded-packages '()
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -162,12 +139,9 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(
-                         monokai
-                         sanityinc-tomorrow-eighties
+   dotspacemacs-themes '(monokai
                          spacemacs-dark
-                         spacemacs-light
-                         )
+                         spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -320,7 +294,7 @@ values."
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
-   dotspacemacs-search-tools '("ag" "grep")
+   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    ;; The default package repository used if no explicit repository has been
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
@@ -340,80 +314,29 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (setenv "PATH" (concat (getenv "PATH") ":/usr/bin:/usr/local/bin"))
-  (setq custom-file "~/.spacemacs.d/customizations.el")
   (add-to-list 'load-path "~/.spacemacs.d/lisp/")
   )
 
-(defun force-save ()
-  (interactive)
-
-  (not-modified 1)
-  (save-buffer))
-
 (defun dotspacemacs/user-config ()
-  (load-file custom-file)
-  ;; (require 'company-simple-complete)
-  (require 'init-javascript)
-  (require 'init-ruby)
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place your code here."
 
-  (setq mac-pass-command-to-system nil)
-
-  ;; keybindings
-  ;; (define-key key-translation-map "\C-j" "\C-x")
-  (global-set-key (kbd "C-x C-s") 'force-save)
-  (global-set-key (kbd "M-\\") 'spacemacs/comment-or-uncomment-lines)
-  (global-set-key (kbd "C-,") 'spacemacs/indent-region-or-buffer)
-  (global-set-key (kbd "C-=") 'text-scale-increase)
-  (global-set-key (kbd "C--") 'text-scale-decrease)
-  (global-set-key (kbd "C-0") 'text-scale-adjust)
-  (global-set-key (kbd "C-<tab>") 'pop-to-mark-command)
-  (global-set-key (kbd "M-P") 'md/duplicate-up)
-  (global-set-key (kbd "M-N") 'md/duplicate-down)
-  (global-set-key (kbd "C-S-p") 'md/move-lines-up)
-  (global-set-key (kbd "C-S-n") 'md/move-lines-down)
-  (global-set-key (kbd "M-C-h") 'evil-window-left)
-  (global-set-key (kbd "M-C-l") 'evil-window-right)
-  (global-set-key (kbd "M-C-k") 'evil-window-up)
-  (global-set-key (kbd "M-C-j") 'evil-window-down)
-  (global-set-key (kbd "C-S-c") 'evil-surround-change)
-  (global-set-key (kbd "M-z") 'zop-to-char)
-  (global-set-key (kbd "M-W") 'copy-word)
-
-  ;; evil bindings
-  (spacemacs/set-leader-keys
-    "p a" 'projectile-find-implementation-or-test-other-window
-    "p A" 'projectile-toggle-between-implementation-and-test
-    "f n s" 'neotree-show
-    )
-  (define-key evil-normal-state-map (kbd "*") 'ahs-forward)
-  (define-key evil-normal-state-map (kbd "#") 'ahs-backward)
-
-  ;; ;; spaceline
+  ;; spaceline
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (spaceline-toggle-buffer-position-off)
   (spaceline-toggle-hud-off)
+  (setq powerline-default-separator 'alternate)
 
   (global-vi-tilde-fringe-mode -1)
   (global-linum-mode 1)
 
-  (add-hook 'term-mode-hook 'spacemacs/toggle-line-numbers-off)
-
-  ;; web-mode config
-  (add-hook 'web-mode-hook (lambda ()
-                             (eslint-set-closest-executable)))
-
-  ;; powerline config
-  (setq powerline-default-separator 'alternate)
-
   ;; open splits vertically first
   (setq split-height-threshold 65)
   (setq split-width-threshold 160)
-
-  ;; save hooks
-  (add-hook 'before-save-hook (lambda ()
-                                (auto-make-directory)))
-
 
   (add-to-list 'auto-mode-alist '("zshrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("eslintrc\\'" . json-mode))
@@ -421,101 +344,43 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (add-to-list 'auto-mode-alist '("envrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("envrc.local\\'" . shell-script-mode))
 
-  (add-hook
-   'dired-mode-hook
-   (lambda ()
+  (add-hook 'dired-mode-hook (lambda ()
      (define-key dired-mode-map (kbd "<backspace>") 'dired-up-directory)))
 
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (setq
-               tab-width 4
-               indent-tabs-mode 1)))
-
-  (setq shackle-rules '(
-                        (magit-status-mode :align right :size 0.3)))
+  (setq shackle-rules '((magit-status-mode :align right :size 0.3)))
   (shackle-mode)
 
-  ;; Move text up and down in visual mode with J/K
-  (define-key evil-visual-state-map "J"
-    (concat ":move '>+1" (kbd "RET") "gv=gv"))
-  (define-key evil-visual-state-map "K"
-    (concat ":move '<-2" (kbd "RET") "gv=gv"))
-
-  ;; Magit
-  ;; Use C-n/C-p to navigate sections
-  (with-eval-after-load 'magit
-    (evil-define-key 'normal magit-mode-map (kbd "C-n") 'magit-section-forward-sibling)
-    (evil-define-key 'normal magit-mode-map (kbd "C-p") 'magit-section-backward-sibling))
-
-  ;; Start in insert mode
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
 
-  (helm-fuzzier-mode 1)
-
-  ;; settings
   (setq
-   shell-file-name "/bin/bash"
-   custom-theme-directory "~/.spacemacs.d/themes"
-   magit-save-repository-buffers nil
+   split-height-threshold 65
+   split-width-threshold 160
+   require-final-newline t
 
-   ;; neotree
-   neo-theme (if (display-graphic-p) 'icons 'arrow)
+   magit-save-repository-buffers nil
 
    ;; spaceline
    spaceline-minor-modes-p nil
 
-   ;; miscellaneous
-   require-final-newline t
-
-   ;; customizations
-   ahs-case-fold-search nil
-   case-fold-search nil
-   create-lockfiles nil
-   delete-selection-mode t
-   exec-path-from-shell-check-startup-files nil
-   flx-ido-mode t
+   ;; neotree
+   neo-theme (if (display-graphic-p) 'icons 'arrow)
+   neo-vc-integration nil
 
    ;; flycheck
-   flycheck-emacs-lisp-load-path (quote inherit)
    flycheck-ruby-rubocop-executable "/Users/abrown/.rvm/gems/ruby-2.3.1@emacs/bin/rubocop"
    flycheck-standard-error-navigation nil
-   pos-tip-background-color "#A6E22E"
-   pos-tip-foreground-color "#272822"
 
    ;; go
-   gofmt-command "goimports"
-   gofmt-is-goimports t
-   gofmt-show-errors (quote echo)
+   ;; gofmt-command "goimports"
+   ;; gofmt-is-goimports t
+   ;; gofmt-show-errors (quote echo)
 
    ;; helm
-   helm-mode-fuzzy-match t
-   helm-ag-use-agignore t
-   helm-ag-fuzzy-match t
-   helm-projectile-fuzzy-match t
+   ;; helm-ag-use-agignore t
+   ;; helm-ag-fuzzy-match t
+   ;; helm-projectile-fuzzy-match t
    helm-candidate-number-limit 100
    helm-ff-candidate-number-limit 100
-
-   ;; highlight
-   highlight-changes-colors (quote ("#FD5FF0" "#AE81FF"))
-   highlight-tail-colors
-   (quote
-    (("#3E3D31" . 0)
-     ("#67930F" . 20)
-     ("#349B8D" . 30)
-     ("#21889B" . 50)
-     ("#968B26" . 60)
-     ("#A45E0A" . 70)
-     ("#A41F99" . 85)
-     ("#3E3D31" . 100)))
-
-   ;; ido
-   ido-auto-merge-delay-time 5
-   ido-case-fold t
-   ido-enable-flex-matching t
-   ido-mode (quote both)
-   ido-save-directory-list-file "/Users/andy/.emacs.d/.cache/ido.last"
-   ido-vertical-mode t
 
    ;; linum
    linum-format "%4d "
@@ -531,20 +396,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
    magit-push-arguments (quote ("--set-upstream"))
    magit-save-repository-buffers nil
 
-   ;; midnight
-   midnight-mode t
-
    ;; OSX settings
    ns-command-modifier (quote meta)
-
-   ;; projectile
-   projectile-enable-caching t
-   projectile-switch-project-action 'projectile-dired
-   projectile-completion-system (quote helm)
-   projectile-create-missing-test-files nil
-   ;; projectile-git-command "ag --nocolor --files-with-matches --hidden --ignore \".git/\" --ignore \"tmp\" -g \"\""
-   projectile-global-mode t
-   projectile-switch-project-action (quote projectile-dired)
 
    ;; shell
    sh-basic-offset 2
@@ -556,17 +409,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
    sp-highlight-wrap-tag-overlay nil
    sp-show-pair-delay 0.2
    sp-show-pair-from-inside t
-
-   ;; tramp
-   tramp-default-method "ssh"
-
-   ;; version control
-   vc-follow-symlinks t
-
-   ;; web-mode
-   web-mode-code-indent-offset 2
-   web-mode-indent-style 1
-   web--markup-indent-offset 2
 
    ;; yas snippet
    yas-choose-keys-first t
@@ -580,27 +422,48 @@ before packages are loaded. If you are unsure, you should try in setting them in
    ;; mode-line
    mode-line-format
    '((:eval (window-numbering-get-number-string))
-    mode-line-front-space
-    evil-mode-line-tag
-    " "
-    mode-line-position
-    " "
-    mode-line-buffer-identification
-    ;; mode-line-mule-info
-    ;; mode-line-client
-    ;; " "
-    mode-line-modified
-    mode-line-remote
-    ;; mode-line-frame-identification
-    " "
-    (vc-mode vc-mode)
-    " "
-    mode-line-modes
-    ;; mode-line-misc-info
-    mode-line-end-spaces)
-   )
+     mode-line-front-space
+     evil-mode-line-tag
+     " "
+     mode-line-position
+     " "
+     mode-line-buffer-identification
+     mode-line-modified
+     mode-line-remote
+     " "
+     (vc-mode vc-mode)
+     " "
+     mode-line-modes
+     mode-line-end-spaces))
 
-  ;; org mode
-  (with-eval-after-load 'org
-    (setq org-agenda-files '("~/org")))
+  (with-eval-after-load 'magit
+    (defun magit-push-to-gerrit ()
+      (interactive)
+      (magit-git-command-topdir "git push gerrit"))
+
+    (magit-define-popup-action 'magit-push-popup
+                               ?m
+                               "Push to gerrit"
+                               'magit-push-to-gerrit))
+
+  (require 'init-javascript)
+  (require 'init-ruby)
   )
+
+;; Do not write anything past this comment. This is where Emacs will
+;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-want-Y-yank-to-eol nil)
+ '(package-selected-packages
+   (quote
+    (dtrt-indent smartparens evil helm-core org-plus-contrib web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data docker tablist docker-tramp inf-ruby memoize font-lock+ helm fringe-helper git-gutter+ git-gutter autothemer gitignore-mode pos-tip flycheck magit magit-popup git-commit with-editor dash-functional company auto-complete tern skewer-mode simple-httpd json-snatcher json-reformat yasnippet multiple-cursors js2-mode evil-search-highlight-persist define-word zop-to-char zonokai-theme zenburn-theme zen-and-art-theme yaml-mode xterm-color ws-butler winum white-sand-theme which-key web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme toc-org tidy tao-theme tangotango-theme tango-plus-theme tango-2-theme symon sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection sql-indent spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop shackle seti-theme scratch sayid rvm ruby-tools ruby-test-mode ruby-refactor rubocop rspec-mode robe rjsx-mode reverse-theme reveal-in-osx-finder restclient restart-emacs rebecca-theme react-snippets rbenv rake rainbow-delimiters railscasts-theme purple-haze-theme professional-theme popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pbcopy password-generator paradox osx-trash osx-dictionary orgit organic-green-theme org-projectile org-present org-pomodoro org-download org-bullets org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noflet noctilux-theme nginx-mode neotree naquadah-theme mwim mustang-theme multi-term move-text move-dup monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme meghanada material-theme markdown-toc majapahit-theme magit-gitflow magit-gh-pulls madhat2r-theme macrostep lush-theme lorem-ipsum livid-mode linum-relative link-hint light-soap-theme launchctl json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gradle-mode gotham-theme google-translate golden-ratio godoctor go-rename go-guru go-eldoc gnuplot github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md gandalf-theme fuzzy flycheck-pos-tip flx-ido floobits flatui-theme flatland-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exotica-theme exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu espresso-theme eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav editorconfig dumb-jump dracula-theme dockerfile-mode django-theme diff-hl darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme dactyl-mode cyberpunk-theme csv-mode company-tern company-statistics company-go company-emacs-eclim column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme browse-at-remote birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme all-the-icons alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
