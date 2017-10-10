@@ -315,6 +315,7 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (add-to-list 'load-path "~/.spacemacs.d/lisp/")
+  (setq custom-file "~/.spacemacs.d/customizations.el")
   )
 
 (defun dotspacemacs/user-config ()
