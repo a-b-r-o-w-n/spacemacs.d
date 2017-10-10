@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     markdown
      html
      ruby
      javascript
@@ -120,7 +121,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -225,7 +226,7 @@ values."
    dotspacemacs-helm-use-fuzzy 'always
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
-   dotspacemacs-enable-paste-transient-state nil
+   dotspacemacs-enable-paste-transient-state t
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
    dotspacemacs-which-key-delay 0.4
@@ -247,7 +248,7 @@ values."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup nil
+   dotspacemacs-maximized-at-startup t
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -332,6 +333,8 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  (global-set-key (kbd "C-<tab>") 'pop-to-mark-command)
+
   ;; spaceline
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (spaceline-toggle-buffer-position-off)
@@ -348,6 +351,7 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '("zshrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("eslintrc\\'" . json-mode))
   (add-to-list 'auto-mode-alist '("babelrc\\'" . json-mode))
+  (add-to-list 'auto-mode-alist '("tfstate\\'" . json-mode))
   (add-to-list 'auto-mode-alist '("envrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("envrc.local\\'" . shell-script-mode))
 
@@ -360,6 +364,7 @@ you should place your code here."
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
 
   (setq
+   exec-path-from-shell-check-startup-files nil
    split-height-threshold 65
    split-width-threshold 160
    require-final-newline t
@@ -383,9 +388,6 @@ you should place your code here."
    ;; gofmt-show-errors (quote echo)
 
    ;; helm
-   ;; helm-ag-use-agignore t
-   ;; helm-ag-fuzzy-match t
-   ;; helm-projectile-fuzzy-match t
    helm-candidate-number-limit 100
    helm-ff-candidate-number-limit 100
 
@@ -405,6 +407,9 @@ you should place your code here."
 
    ;; OSX settings
    ns-command-modifier (quote meta)
+
+   ;; projectile
+   projectile-switch-project-action 'projectile-dired
 
    ;; shell
    sh-basic-offset 2
@@ -455,22 +460,7 @@ you should place your code here."
 
   (require 'init-javascript)
   (require 'init-ruby)
-  )
 
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
- '(package-selected-packages
-   (quote
-    (dtrt-indent smartparens evil helm-core org-plus-contrib web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data docker tablist docker-tramp inf-ruby memoize font-lock+ helm fringe-helper git-gutter+ git-gutter autothemer gitignore-mode pos-tip flycheck magit magit-popup git-commit with-editor dash-functional company auto-complete tern skewer-mode simple-httpd json-snatcher json-reformat yasnippet multiple-cursors js2-mode evil-search-highlight-persist define-word zop-to-char zonokai-theme zenburn-theme zen-and-art-theme yaml-mode xterm-color ws-butler winum white-sand-theme which-key web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme toc-org tidy tao-theme tangotango-theme tango-plus-theme tango-2-theme symon sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection sql-indent spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop shackle seti-theme scratch sayid rvm ruby-tools ruby-test-mode ruby-refactor rubocop rspec-mode robe rjsx-mode reverse-theme reveal-in-osx-finder restclient restart-emacs rebecca-theme react-snippets rbenv rake rainbow-delimiters railscasts-theme purple-haze-theme professional-theme popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pbcopy password-generator paradox osx-trash osx-dictionary orgit organic-green-theme org-projectile org-present org-pomodoro org-download org-bullets org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noflet noctilux-theme nginx-mode neotree naquadah-theme mwim mustang-theme multi-term move-text move-dup monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme meghanada material-theme markdown-toc majapahit-theme magit-gitflow magit-gh-pulls madhat2r-theme macrostep lush-theme lorem-ipsum livid-mode linum-relative link-hint light-soap-theme launchctl json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gradle-mode gotham-theme google-translate golden-ratio godoctor go-rename go-guru go-eldoc gnuplot github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md gandalf-theme fuzzy flycheck-pos-tip flx-ido floobits flatui-theme flatland-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exotica-theme exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu espresso-theme eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav editorconfig dumb-jump dracula-theme dockerfile-mode django-theme diff-hl darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme dactyl-mode cyberpunk-theme csv-mode company-tern company-statistics company-go company-emacs-eclim column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme browse-at-remote birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme all-the-icons alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
+  ;; workaround for https://github.com/syl20bnr/spacemacs/issues/9549
+  (require 'helm-bookmark)
+  )
